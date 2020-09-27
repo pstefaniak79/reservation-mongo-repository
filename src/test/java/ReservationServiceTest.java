@@ -1,39 +1,40 @@
+import org.junit.Before;
 import org.junit.Test;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.test.context.ActiveProfiles;
+import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
-import pl.pstefaniak.mongo.ActuatorConfig;
 import pl.pstefaniak.mongo.MongoConfig;
-import pl.pstefaniak.mongo.reservation.ReservationService;
+import pl.pstefaniak.mongo.ReservationMongoRepositoryApplication;
 import pl.pstefaniak.mongo.reservation.repository.MongoReservationsRepository;
 import pl.pstefaniak.mongo.reservation.repository.Reservation;
+import pl.pstefaniak.mongo.room.RoomType;
 
-import java.math.BigDecimal;
+import java.time.LocalDate;
 
-//@TestPropertySource(properties = { "spring.config.location=classpath:application.properties" })
-@SpringBootTest(classes = { MongoConfig.class} )
-//@ComponentScan(basePackages = "pl.pstefaniak")
-@DataMongoTest
 @RunWith(SpringRunner.class)
+@SpringBootTest(classes = ReservationMongoRepositoryApplication.class)
 public class ReservationServiceTest {
 
-    //@Autowired
-    //MongoReservationsRepository mongoReservationsRepository;
+    @Autowired
+    MongoReservationsRepository mongoReservationsRepository;
 
+    @Value("${spring.data.mongodb.host}")
+    String host;
 
-    @BeforeAll
+    @Before
     public void setUp() {
-       // mongoReservationsRepository.save(new Reservation(1l, 4l, new BigDecimal(500)));
+        mongoReservationsRepository.save(new Reservation("", LocalDate.now(), LocalDate.now(), 2, RoomType.QUEEN));
     }
 
     @Test
     public void findReservation() {
-        //mongoReservationsRepository.save(new Reservation(1l, 4l, new BigDecimal(500)));
+        mongoReservationsRepository.save(new Reservation("", LocalDate.now(), LocalDate.now(), 2, RoomType.QUEEN));
+        System.out.println(host);
     }
 }
