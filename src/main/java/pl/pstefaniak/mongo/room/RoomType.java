@@ -3,7 +3,7 @@ package pl.pstefaniak.mongo.room;
 import java.math.BigDecimal;
 
 public enum RoomType {
-    STANDARD(new BigDecimal(1)), QUEEN(new BigDecimal(100));
+    STANDARD(new BigDecimal(2)), QUEEN(new BigDecimal(100));
 
     BigDecimal roomPrice;
 

@@ -1,6 +1,7 @@
 package pl.pstefaniak.mongo.reservation.repository;
 
 import lombok.AllArgsConstructor;
+import org.springframework.context.annotation.Primary;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 
@@ -9,6 +10,7 @@ import java.util.Optional;
 
 @Repository
 @AllArgsConstructor
+@Primary
 public class MongoReservationsRepository implements ReservationRepository {
 
     SpringDataReservationsRepository repository;
