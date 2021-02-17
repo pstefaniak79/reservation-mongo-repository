@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 import pl.pstefaniak.mongo.reservation.repository.MongoReservationsJavaDriverRepository;
 import pl.pstefaniak.mongo.reservation.repository.MongoReservationsRepository;
@@ -16,6 +17,8 @@ import pl.pstefaniak.mongo.reservation.repository.Reservation;
 import pl.pstefaniak.mongo.room.RoomType;
 
 import java.time.LocalDate;
+import java.util.List;
+import java.util.Optional;
 
 @Configuration
 @EnableMongoRepositories(considerNestedRepositories = true)
@@ -29,9 +32,12 @@ public class MongoConfig {
             repository.save(new Reservation("Aleksander Stefaniak", LocalDate.of(2020, 2, 12), LocalDate.of(2020, 2, 20), 1, RoomType.STANDARD));
             repository.save(new Reservation("Lena Stefaniak", LocalDate.of(2020, 2, 12), LocalDate.of(2020, 2, 20), 1, RoomType.STANDARD));
 
-            mongoReservationsJavaDriverRepository.save(new Reservation("Magdalena Kaczmarska", LocalDate.of(2020, 2, 12), LocalDate.of(2020, 2, 20), 1, RoomType.STANDARD));
 
+            Reservation magdalena_kaczmarska_reservation = new Reservation("Magdalena Kaczmarska", LocalDate.of(2020, 2, 12), LocalDate.of(2020, 2, 20), 1, RoomType.STANDARD);
+            mongoReservationsJavaDriverRepository.save(magdalena_kaczmarska_reservation);
 
+            Optional<Reservation> one = mongoReservationsJavaDriverRepository.findOne(magdalena_kaczmarska_reservation.getId());
+            System.out.println(one);
         };
     }
 
@@ -44,7 +50,7 @@ public class MongoConfig {
     @Bean
     public MongoClient mongoClient() {
         ConnectionString connString = new ConnectionString(
-                "mongodb://" + host + ":" + port
+                "mongodb://" + host + ":" + port+"/reservation"
         );
         MongoClientSettings settings = MongoClientSettings.builder()
                 .applyConnectionString(connString)
@@ -56,6 +62,11 @@ public class MongoConfig {
 
     @Bean
     public MongoReservationsJavaDriverRepository mongoReservationsJavaDriverRepository() {
-        return new MongoReservationsJavaDriverRepository(mongoClient());
+        return new MongoReservationsJavaDriverRepository(mongoClient(), mongoTemplate());
+    }
+
+    @Bean
+    public MongoTemplate mongoTemplate() {
+        return new MongoTemplate(mongoClient(), "reservation" );
     }
 }

@@ -9,6 +9,9 @@ import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
 import lombok.AllArgsConstructor;
 import org.bson.Document;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import pl.pstefaniak.mongo.reservation.ReservationRepresentation;
 
 import java.io.IOException;
@@ -16,12 +19,11 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-@AllArgsConstructor
 public class MongoReservationsJavaDriverRepository implements ReservationRepository {
     private final SpringDataReservationsJavaDriverRepository repository;
 
-    public MongoReservationsJavaDriverRepository(MongoClient mongoClient) {
-        repository = new SpringDataReservationsJavaDriverRepositoryImpl(mongoClient);
+    public MongoReservationsJavaDriverRepository(MongoClient mongoClient, MongoTemplate mongoTemplate) {
+        repository = new SpringDataReservationsJavaDriverRepositoryImpl(mongoClient, mongoTemplate);
     }
 
     @Override
@@ -73,14 +75,15 @@ public class MongoReservationsJavaDriverRepository implements ReservationReposit
         Reservation save(Reservation r);
     }
 
-
+    @AllArgsConstructor
     class SpringDataReservationsJavaDriverRepositoryImpl implements SpringDataReservationsJavaDriverRepository {
 
         private final MongoClient mongoClient;
+        private final MongoTemplate mongoTemplate;
 
-        public SpringDataReservationsJavaDriverRepositoryImpl(MongoClient mongoClient) {
-            this.mongoClient = mongoClient;
-        }
+//        public SpringDataReservationsJavaDriverRepositoryImpl(MongoClient mongoClient) {
+//            this.mongoClient = mongoClient;
+//        }
 
         @Override
         public List<Reservation> findByReservationId(long reservationId) {
@@ -103,13 +106,13 @@ public class MongoReservationsJavaDriverRepository implements ReservationReposit
         }
 
         @Override
-        public Optional<Reservation> findById(String reservationId) {
-            return Optional.empty();
+        public Optional<Reservation> findById(String id) {
+            return Optional.ofNullable(mongoTemplate.findOne(Query.query(Criteria.where("_id").is(id)), Reservation.class));
         }
 
         @Override
         public Reservation save(Reservation r) {
-            MongoCollection<Document> chopinReservations = mongoClient.getDatabase("reservation").getCollection("chopin");
+            MongoCollection<Document> chopinReservations = mongoClient.getDatabase("reservation").getCollection("reservation");
 
 //            Document document = new Document("name", "Café Con Leche")
 //                    .append("roomPrice", r.getName())
