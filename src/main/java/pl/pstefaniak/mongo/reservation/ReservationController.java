@@ -3,7 +3,9 @@ package pl.pstefaniak.mongo.reservation;
 import io.micrometer.core.annotation.Timed;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import pl.pstefaniak.mongo.reservation.repository.Reservation;
 
 import java.util.List;
 
@@ -34,4 +36,10 @@ public class ReservationController {
                 .collect(toList());
     }
 
+    @Timed(value = "add_reservation")
+    @PostMapping(value = "/{hotelId}/addReservation")
+    public ReservationRepresentation calculateFor(@PathVariable("hotelId") int hotelId,
+                                                  @RequestBody ReservationRepresentation reservationRepresentation) {
+        return ReservationRepresentation.of(reservationService.create(Reservation.of(reservationRepresentation)));
+    }
 }

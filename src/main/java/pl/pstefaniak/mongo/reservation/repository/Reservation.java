@@ -4,6 +4,7 @@ import com.sun.istack.internal.NotNull;
 import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+import pl.pstefaniak.mongo.reservation.ReservationRepresentation;
 import pl.pstefaniak.mongo.room.RoomType;
 
 import java.math.BigDecimal;
@@ -60,5 +61,9 @@ public class Reservation {
 
     private BigDecimal calculatePriceOf(LocalDate startDate, LocalDate endDate, RoomType roomType) {
         return roomType.getRoomPrice().multiply(BigDecimal.valueOf(Period.between(endDate, startDate).getDays()));
+    }
+
+    public static Reservation of(ReservationRepresentation reservationRepresentation) {
+        return ReservationMapper.INSTANCE.reservationRepresentationToReservation(reservationRepresentation);
     }
 }

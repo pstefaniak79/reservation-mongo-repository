@@ -14,10 +14,8 @@ public class ActuatorConfig {
     @Bean
     HealthIndicator countHealthIndicator(MongoReservationsRepository reservationRepository) {
         return () -> {
-
             Status status = reservationRepository.count() > 0 ? Status.UP : Status.DOWN;
-            return Health.status(status)
-                    .build();
+            return Health.status(status).build();
         };
     }
 }
