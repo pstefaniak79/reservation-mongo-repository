@@ -22,6 +22,8 @@ public class ReservationController {
     @Timed(value = "find_all_reservations")
     @GetMapping("/findAllReservations")
     public List<ReservationRepresentation> findAllReservations() {
+        log.debug("fired method: findAllReservations");
+
         return reservationService.findAllReservations().stream()
                 .map(ReservationRepresentation::of)
                 .collect(toList());
@@ -31,6 +33,8 @@ public class ReservationController {
     @PostMapping("/{hotelId}/findAllReservations")
     public List<ReservationRepresentation> calculateFor(@PathVariable("hotelId") int hotelId,
                                                         @RequestBody ReservationRequest request) {
+        log.debug("fired method: /{hotelId}/findAllReservations");
+
         return reservationService.findAllReservationsByHotelId(hotelId).stream()
                 .map(ReservationRepresentation::of)
                 .collect(toList());
@@ -40,6 +44,9 @@ public class ReservationController {
     @PostMapping(value = "/{hotelId}/addReservation")
     public ReservationRepresentation calculateFor(@PathVariable("hotelId") int hotelId,
                                                   @RequestBody ReservationRepresentation reservationRepresentation) {
+        log.info("fired method: /{hotelId}/addReservation");
+        log.info(reservationRepresentation.toJson());
+
         return ReservationRepresentation.of(reservationService.create(Reservation.of(reservationRepresentation)));
     }
 }
